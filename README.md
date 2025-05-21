@@ -57,10 +57,24 @@ We have open-sourced our three-stage training code, including pre-training, SFT,
 
 **Inference Usage**
 
-
+Direct inference can be executed with the following script
 ``` sh
 cd cli
 sh run_evalation.sh
+```
+Or you can also run it directly using the following Python command
+```
+python inference.py \
+    --model_config $model_config \
+    --ckpt_config $ckpt_config \
+    --model_name $model_path \
+    --output_dir $output_dir \
+    --temperature $temperature \
+    --top_p $top_p \
+    --seed $seed \
+    --text $text \
+    --ref_text $ref_text \
+    --ref_audio_path $ref_audio_path \
 ```
 
 
@@ -217,6 +231,8 @@ Our model can generate audio that maintains the timbre of the reference audio wh
 
 ## References
 [1] [pai-megagtron-patch](https://github.com/alibaba/Pai-Megatron-Patch/tree/main)
+
+[2][data process tool](https://github.com/modelscope/FunASR)
 
 
 ## Disclaimer
