@@ -14,7 +14,6 @@ export TORCH_DISTRIBUTED_DEBUG=DETAIL
 ENV=dsw
 CURRENT_DIR="$( cd "$( dirname "$0" )" && pwd )"
 MEGATRON_PATH=$( dirname $( dirname ${CURRENT_DIR}))
-MEGATRON_PATH=/cognitive_comp/sunqianguo/workspace/pai-megatron-patch
 
 PYTHONPATH=$(which python)
 export PYTHONPATH=${MEGATRON_PATH}:${MEGATRON_PATH}/PAI-Megatron-LM-240718:$PYTHONPATH
@@ -100,18 +99,19 @@ AC=false
 OPTIMIZER_OFFLOAD=false
 
 SAVE_INTERVAL=300
-DATASET_PATH1_1=/cognitive_comp/ccnl_common_data/large_audio_model_text/pretrain/stage3_eos/pretrain_text_skypile_part1_stage3_content_document
 
-VALID_DATASET_PATH=/cognitive_comp/sunqianguo/workspace/Pai-Megatron-Patch/data/pretrain/output/multi_modal/pretrain_asr_content_document #/cognitive_comp/sunqianguo/workspace/Pai-Megatron-Patch/qwen-datasets/wudao_qwenbpe_text_document #/cognitive_comp/sunqianguo/workspace/Pai-Megatron-Patch/data/pretrain/output/multi_modal/pretrain_asr_tts_data_content_document #/cognitive_comp/sunqianguo/workspace/Pai-Megatron-Patch/qwen-datasets/wudao_qwenbpe_text_document
-#PRETRAIN_CHECKPOINT_PATH=/cognitive_comp/sunqianguo/workspace/Pai-Megatron-Patch/output/7B/20241116/checkpoint/pretrain-mcore-qwen2.5-7B-lr-4e-5-minlr-2.5e-5-bs-1-gbs-320-seqlen-8193-pr-bf16-tp-1-pp-4-cp-1-ac-false-do-true-sp-true-ti-50290-wi-381 #/cognitive_comp/sunqianguo/workspace/Pai-Megatron-Patch/output/7B/20241101/checkpoint/pretrain-mcore-qwen2.5-7B-lr-6e-5-minlr-4e-5-bs-1-gbs-320-seqlen-8193-pr-bf16-tp-1-pp-4-cp-1-ac-false-do-true-sp-true-ti-29121-wi-38/iter_0029000_hf_megatron 
-PRETRAIN_CHECKPOINT_PATH=/cognitive_comp/sunqianguo/workspace/Pai-Megatron-Patch/output/7B/20241119/c3/checkpoint/pretrain-mcore-qwen2.5-7B-lr-4e-5-minlr-2.5e-5-bs-1-gbs-320-seqlen-8193-pr-bf16-tp-1-pp-4-cp-1-ac-false-do-true-sp-true-ti-50290-wi-38/ #/cognitive_comp/sunqianguo/workspace/Pai-Megatron-Patch/output/7B/20241119/checkpoint/pretrain-mcore-qwen2.5-7B-lr-4e-5-minlr-2.5e-5-bs-1-gbs-320-seqlen-8193-pr-bf16-tp-1-pp-4-cp-1-ac-false-do-true-sp-true-ti-50290-wi-38/
+DOCKER_PATH=$1
+DATASET_PATH1_1=$2
+VALID_DATASET_PATH=$3
+PRETRAIN_CHECKPOINT_PATH=$4
+OUTPUT_BASEPATH=./output/
 
 # the following two values will not be used when SFT is true
 TRAIN_TOKENS=131850000000
 WARMUP_TOKENS=100000000  #1000000000 
 ###############################
 
-OUTPUT_BASEPATH=./output/
+
 mkdir -p $OUTPUT_BASEPATH
 ### OTHERS ###
 
@@ -454,6 +454,8 @@ megatron_options="  \
         --rotary-base 1000000 \
         --rotary-seq-len-interpolation-factor 1 \
         --reset-attention-mask \
+        --no-load-optim \
+        --no-load-rng \
         "
 
 #--wandb-project ${wandb_project} \
@@ -469,7 +471,6 @@ run_cmd="torchrun $DISTRIBUTED_ARGS ../qwen2/pretrain_qwen.py
  ${do_options} ${sp_options} ${gqa_options} ${offload_option} ${comm_overlap_option} ${sft_option}  ${tie_option} ${vp_options} ${packing_options}"
 
 
-DOCKER_PATH=/cognitive_comp/sunqianguo/docker/images/pai.sif
 srun singularity exec \
     --env RUST_BACKTRACE=full \
     --env PYTHONPATH=${MEGATRON_PATH}:${MEGATRON_PATH}/PAI-Megatron-LM-240718:$PYTHONPATH \
