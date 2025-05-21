@@ -17,7 +17,7 @@
 
 ### Overview
 
-we introduce DistilCodec and UniTTS. DistilCodec is a single-codebook audio codec, which has 32768 codes, and the utilization of the codebook achieves nearly 100\%. UniTTS leverages DistilCodec for audio discretization, while its backbone network adopts Qwen2.5-7B to model relationships between audio tokens. The architecture of UniTTS is illustrated in Figure ![UniTTS](./figures/figure_1.jpg).
+we introduce DistilCodec and UniTTS. DistilCodec is a single-codebook audio codec, which has 32768 codes, and the utilization of the codebook achieves nearly 100\%. UniTTS leverages DistilCodec for audio discretization, while its backbone network adopts Qwen2.5-7B to model relationships between audio tokens. The architecture of UniTTS is illustrated in the figure below. ![UniTTS](./figures/figure_1.jpg).
 
 
 ## Install
