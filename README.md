@@ -7,9 +7,9 @@
    </p>
     <p>
     </p>
-    <a href="https://arxiv.org/pdf/2503.01710"><img src="https://img.shields.io/badge/Paper-ArXiv-red" alt="paper"></a>
-    <a href="https://sparkaudio.github.io/spark-tts/"><img src="https://img.shields.io/badge/Demo-Page-lightgrey" alt="version"></a>
-    <a href="https://huggingface.co/SparkAudio/Spark-TTS-0.5B"><img src="https://img.shields.io/badge/Hugging%20Face-Model%20Page-yellow" alt="Hugging Face"></a>
+    <a href="https" style="color:red">Paper </a> |  
+    <a href="https://huggingface.co/IDEA-Emdoor/UniTTS-mixed-v0.1" style="color:#FFD700">Hugging Face Model</a>
+    <a href="https://github.com/IDEA-Emdoor-Lab/UniTTS?tab=readme-ov-file" style="color:gray">Code</a>
 </div>
 
 
@@ -17,7 +17,13 @@
 
 ### Overview
 
-we introduce DistilCodec and UniTTS. DistilCodec is a single-codebook audio codec, which has 32768 codes, and the utilization of the codebook achieves nearly 100\%. UniTTS leverages DistilCodec for audio discretization, while its backbone network adopts Qwen2.5-7B to model relationships between audio tokens. The architecture of UniTTS is illustrated in the figure below. ![UniTTS](./figures/figure_1.jpg).
+we introduce DistilCodec and UniTTS. DistilCodec is a single-codebook audio codec, which has 32768 codes, and the utilization of the codebook achieves nearly 100\%. UniTTS leverages DistilCodec for audio discretization, while its backbone network adopts Qwen2.5-7B to model relationships between audio tokens. \item \textbf{DistilCodec}: We propose a training methodology that enables the distillation of multi-codebook NAC into single-codebook NAC. Through this approach, we have developed DistilCodec - a single-codebook NAC containing 32,768 codes that achieves 100\% utilization with balanced code distribution. Notably, DistilCodec employs universal audio data for training rather than being restricted to speech-specific datasets.Our main contributions are summarized as follows:
+
+  - DistilCodec: We propose a training methodology that enables the distillation of multi-codebook NAC into single-codebook NAC. Through this approach, we have developed DistilCodec - a single-codebook NAC containing 32,768 codes that achieves 100\% utilization with balanced code distribution. Notably, DistilCodec employs universal audio data for training rather than being restricted to speech-specific datasets.
+  - UniTTS: We present UniTTS, a novel TTS system trained on QWen2.5-7B and DistilCodec. Leveraging DistilCodec's comprehensive audio modeling capabilities, UniTTS achieves end-to-end speech synthesis with full-spectrum audio input/output. The system demonstrates enhanced naturalness in emotional expressiveness compared to conventional TTS systems, particularly in capturing subtle prosodic variations and affective nuances during audio generation. 
+  - Novel Audio Language Model Paradigm: We establish a dual-phase Audio Language Model (ALM) training framework, which comprises (i) Audio Perceptual Modeling (DistilCodec) focusing purely on acoustic discretization, and (ii) Audio Cognitive Modeling (UniTTS) implemented via pretraining (incorporating universal audio autoregressive tasks), supervised fine-tuning (evaluating text-audio interleaved prompts' impact), and alignment (employing direct preference optimization for speech refinement) - enabled by UniTTS's complete end-to-end integration within the LLM.
+\end{itemize}
+The architecture of UniTTS is illustrated in the figure below. ![UniTTS](./figures/figure_1.jpg).
 
 
 ## Install
@@ -88,7 +94,7 @@ Our model can generate audio that maintains the timbre of the reference audio wh
 | [system_audio.wav](./demos/voice0/system_audio.wav) | 求求你…不要离开我，我真的好害怕… | [infer.wav](./demos/voice0/infer_0.wav) |
 | [system_audio.wav](./demos/voice1/system_audio.wav) | 天啊！这竟然是真的？我简直不敢相信！ | [infer.wav](./demos/voice1/infer_1_1.wav) |
 | [system_audio.wav](./demos/voice2/system_audio.wav) | 立刻停止你的行为！这是最后的警告！ | [infer.wav](./demos/voice2/infer_2_1.wav) |
-| [voice3/system_audio.wav](./demos/voice3/system_audio.wav) | 天啊！这绝对是我见过最不可思议的画面！ | [infer.wav](./demos/voice3/infer_2_1.wav) |
+| [voice3/system_audio.wav](./demos/voice3/system_audio.wav) | 天啊！这绝对是我见过最不可思议的画面！ | [infer.wav](./demos/voice3/infer_3_1.wav) |
 | [system_audio.wav](./demos/voice4/system_audio.wav) | 你怎么能这样对我？我简直无法忍受！ | [infer.wav](./demos/voice4/infer_4_1.wav) |
 | [system_audio.wav](./demos/voice5/system_audio.wav) | 今天的阳光真温暖，公园里的花开得特别灿烂！！ | [infer.wav](./demos/voice5/infer_5_1.wav) |
 | [system_audio.wav](./demos/voice6/system_audio.wav) | 可是，她有一个不太好看的孩子，这个孩子被送到了挖沟工人的老婆家里抚养。而安妮·莉斯贝自己呢，住进了伯爵的公馆。 | [infer.wav](./demos/voice6/infer_6_1.wav) |
@@ -96,22 +102,6 @@ Our model can generate audio that maintains the timbre of the reference audio wh
 | [system_audio.wav](./demos/voice8/system_audio.wav) | 当我看到那双眼睛时，仿佛整个宇宙都安静了下来。 | [infer.wav](./demos/voice8/infer_8_1.wav) |
 | [system_audio.wav](./demos/voice9/system_audio.wav) | 听到这个消息，我的心一下子沉到了谷底。 | [infer.wav](./demos/voice9/infer_9_1.wav) |
 | [system_audio.wav](./demos/voice10/system_audio.wav) | 当我看到那双眼睛时，仿佛整个宇宙都安静了下来。 | [infer.wav](./demos/voice10/infer_10_1.wav) |
-
-
-| ref audio |  Inference text  | Inference Audio |
-|--------|--------------------------|--------------------------|
-| <audio controls><source src="./demos/voice0/system_audio.wav" type="audio/mpeg"></audio> | 求求你…不要离开我，我真的好害怕… | <audio controls><source src="./demos/voice0/infer_0.wav" type="audio/mpeg"></audio> |
-| <audio controls><source src="./demos/voice1/system_audio.wav" type="audio/mpeg"></audio> | 天啊！这竟然是真的？我简直不敢相信！ |<audio controls><source src="./demos/voice1/infer_1_1.wav" type="audio/mpeg"></audio> |
-| <audio controls><source src="./demos/voice2/system_audio.wav" type="audio/mpeg"></audio> | 立刻停止你的行为！这是最后的警告！ |<audio controls><source src="./demos/voice2/infer_2_1.wav" type="audio/mpeg"></audio> |
-| <audio controls><source src="./demos/voice3/system_audio.wav" type="audio/mpeg"></audio> | 天啊！这绝对是我见过最不可思议的画面！ |<audio controls><source src="./demos/voice3/infer_2_1.wav" type="audio/mpeg"></audio> |
-| <audio controls><source src="./demos/voice4/system_audio.wav" type="audio/mpeg"></audio> | 你怎么能这样对我？我简直无法忍受！ |<audio controls><source src="./demos/voice4/infer_4_1.wav" type="audio/mpeg"></audio> |
-| <audio controls><source src="./demos/voice5/system_audio.wav" type="audio/mpeg"></audio> | 今天的阳光真温暖，公园里的花开得特别灿烂！！ |<audio controls><source src="./demos/voice5/infer_5_1.wav" type="audio/mpeg"></audio> |
-| <audio controls><source src="./demos/voice6/system_audio.wav" type="audio/mpeg"></audio> | 可是，她有一个不太好看的孩子，这个孩子被送到了挖沟工人的老婆家里抚养。而安妮·莉斯贝自己呢，住进了伯爵的公馆。 |<audio controls><source src="./demos/voice6/infer_6_1.wav" type="audio/mpeg"></audio> |
-| <audio controls><source src="./demos/voice7/system_audio.wav" type="audio/mpeg"></audio> | 求求你…不要离开我，我真的好害怕… |<audio controls><source src="./demos/voice7/infer_7_1.wav" type="audio/mpeg"></audio> |
-| <audio controls><source src="./demos/voice8/system_audio.wav" type="audio/mpeg"></audio> | 当我看到那双眼睛时，仿佛整个宇宙都安静了下来。 |<audio controls><source src="./demos/voice8/infer_8_1.wav" type="audio/mpeg"></audio> |
-| <audio controls><source src="./demos/voice9/system_audio.wav" type="audio/mpeg"></audio> | 听到这个消息，我的心一下子沉到了谷底。 |<audio controls><source src="./demos/voice9/infer_9_1.wav" type="audio/mpeg"></audio> |
-| <audio controls><source src="./demos/voice10/system_audio.wav" type="audio/mpeg"></audio> | 当我看到那双眼睛时，仿佛整个宇宙都安静了下来。 |<audio controls><source src="./demos/voice10/infer_10_1.wav" type="audio/mpeg"></audio> |
----
 
 
 
