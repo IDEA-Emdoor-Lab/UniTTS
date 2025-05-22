@@ -103,18 +103,27 @@ Our model can generate audio that maintains the timbre of the reference audio wh
 | [system_audio.wav](./demos/voice9/system_audio.wav) | 听到这个消息，我的心一下子沉到了谷底。 | [infer.wav](./demos/voice9/infer_9_1.wav) |
 | [system_audio.wav](./demos/voice10/system_audio.wav) | 当我看到那双眼睛时，仿佛整个宇宙都安静了下来。 | [infer.wav](./demos/voice10/infer_10_1.wav) |
 
+# 使用范围
 
 
 ## Citation
-
 ```
-
+@article{wang2025unitts,
+  title={UniTTS: An end-to-end TTS system without decoupling of acoustic and semantic information},
+  author={Rui Wang,Qianguo Sun,Tianrong Chen,Zhiyun Zeng,Junlong Wu,Jiaxing Zhang},
+  journal={arXiv preprint arXiv:2408.16532},
+  year={2025}
+}
 ```
 
 ## References
+The UniTTS model underwent a three-phase training paradigm consisting of pretraining, supervised fine-tuning (SFT), and direct preference optimization (DPO). Our training framework was developed through extensive customization of the open-source PAI-Megatron-Patch infrastructure. The training data underwent rigorous preprocessing utilizing open-source speech processing tools including FunASR and Whisper, which implemented advanced audio cleansing techniques such as voice activity detection and silence removal algorithms to ensure data quality.
+
 [1] [pai-megagtron-patch](https://github.com/alibaba/Pai-Megatron-Patch/tree/main)
 
-[2][data process tool](https://github.com/modelscope/FunASR)
+[2][FunASR](https://github.com/modelscope/FunASR)
+
+[3][whisper](https://github.com/openai/whisper)
 
 
 ## Disclaimer
