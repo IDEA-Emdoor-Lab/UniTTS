@@ -8,8 +8,8 @@ import librosa
 import argparse
 from vllm import LLM, SamplingParams
 
-sys.path.append('/cognitive_comp/sunqianguo/workspace/audio_codec')
-from aipal_codec import AIPalCodec, decode_codec_and_save_audio # type: ignore
+sys.path.append('../../DistilCodec/')
+from distil_codec import DistilCodec # type: ignore
 
 tts_prompt_ref_text = """<|im_start|>system
 ### 你输出的音色要求：
@@ -92,7 +92,7 @@ class InferenceClient:
     def load_model_and_codec(self):
         llm = LLM(model=self.args.model_name, dtype='auto', gpu_memory_utilization=0.8, seed=self.args.seed) # , seed=42    
 
-        codec = AIPalCodec.from_pretrained(
+        codec = DistilCodec.from_pretrained(
             config_path=self.args.model_config,
             model_path=self.args.ckpt_config,
             use_generator=True,
@@ -125,7 +125,17 @@ class InferenceClient:
         output = llm.generate([prompt], sampling_params)
         tokens = tokenizer.tokenizer.encode(output[0].outputs[0].text)[1: -2]
         utt = 'infer'
-        decode_codec_and_save_audio([tokens], self.args.output_dir, utt, codec) 
+        #decode_codec_and_save_audio([tokens], self.args.output_dir, utt, codec) 
+        y_gen = codec.decode_from_codes(
+            tokens, 
+            minus_token_offset=True # if the 'plus_llm_offset' of method demo_for_generate_audio_codes is set to True, then minus_token_offset must be True.
+        )
+        codec.save_wav(
+            audio_gen_batch=y_gen, 
+            nhop_lengths=[y_gen.shape[-1]], 
+            save_path=self.args.output_dir,
+            name_tag=utt
+        )
 def main():
     args = get_args()
     print(args)

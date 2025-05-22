@@ -68,7 +68,10 @@ The proposed model supports the following capabilities
 
 - Clone the repo
 ``` sh
-git clone https://github.com/IDEA-Emdoor-Lab/UniTTS.git
+git clone git@github.com:IDEA-Emdoor-Lab/UniTTS.git
+
+git clone git@github.com:IDEA-Emdoor-Lab/DistilCodec.git
+
 cd UniTTS
 ```
 
@@ -90,7 +93,11 @@ mkdir -p pretrained_models
 # Make sure you have git-lfs installed (https://git-lfs.com)
 git lfs install
 
-git clone https://huggingface.co/IDEA-Emdoor/UniTTS-mixed-v0.1
+# clone UniTTS model
+git clone git@hf.co:IDEA-Emdoor/UniTTS-mixed-v0.1
+
+# clone DistilCodec model
+git clone git@hf.co:IDEA-Emdoor/DistilCodec-v1.0
 ```
 
 **Training Usage**
@@ -119,8 +126,6 @@ python inference.py \
     --ref_text $ref_text \
     --ref_audio_path $ref_audio_path \
 ```
-
-
 
 ## **Demos**
 
