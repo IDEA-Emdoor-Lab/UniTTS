@@ -25,6 +25,35 @@ we introduce DistilCodec and UniTTS. DistilCodec is a single-codebook audio code
 \end{itemize}
 The architecture of UniTTS is illustrated in the figure below. ![UniTTS](./figures/figure_1.jpg).
 
+# Training data distribution and application scope
+The model architecture was augmented with cross-lingual text-speech paired datasets (English and Chinese) alongside text-associated instruction corpora during pretraining. Subsequent SFT and alignment phases systematically incorporated three datasets: text instructions dataset, long-CoT dataset, and Chinese TTS dataset. Consequently, the model demonstrates robust capabilities in text-based conversational interactions, long-CoT reasoning tasks, and Chinese TTS.
+
+The distribution of the sft training data is as follows:
+
+| Data Type                  | Number of Samples |
+|----------------------------|-------------------|
+| Text Data                  | 181K              |
+| Long-cot Dataset           | 55K               |
+| Chinese Text-Audio Alignment Data  | 401K              |
+| Total                      | 637K              |
+
+The distribution of the lpo training data is as follows:
+
+| Data Type                  | Number of Samples |
+|----------------------------|-------------------|
+| General SFT Data           | 100K              |
+| Long-cot Dataset           | 45K               |
+| Chinese Text-Audio Alignment Data  | 300K              |
+| Total                      | 445K              |
+
+The proposed model supports the following capabilities
+
+|     Application Type       | Support Status    |
+|----------------------------|-------------------|
+| Text conversation          | Supported           |
+| Long-cot conversation      | Supported           |
+| Chinese TTS                | Supported           |
+
 
 ## Install
 **Clone and Install**
@@ -103,7 +132,6 @@ Our model can generate audio that maintains the timbre of the reference audio wh
 | [system_audio.wav](./demos/voice9/system_audio.wav) | 听到这个消息，我的心一下子沉到了谷底。 | [infer.wav](./demos/voice9/infer_9_1.wav) |
 | [system_audio.wav](./demos/voice10/system_audio.wav) | 当我看到那双眼睛时，仿佛整个宇宙都安静了下来。 | [infer.wav](./demos/voice10/infer_10_1.wav) |
 
-# 使用范围
 
 
 ## Citation
@@ -117,7 +145,7 @@ Our model can generate audio that maintains the timbre of the reference audio wh
 ```
 
 ## References
-The UniTTS model underwent a three-phase training paradigm consisting of pretraining, supervised fine-tuning (SFT), and direct preference optimization (DPO). Our training framework was developed through extensive customization of the open-source PAI-Megatron-Patch infrastructure. The training data underwent rigorous preprocessing utilizing open-source speech processing tools including FunASR and Whisper, which implemented advanced audio cleansing techniques such as voice activity detection and silence removal algorithms to ensure data quality.
+The UniTTS model underwent a three-phase training paradigm consisting of pretraining, SFT, and DPO. Our training framework was developed through extensive customization of the open-source PAI-Megatron-Patch infrastructure. The training data underwent rigorous preprocessing utilizing open-source speech processing tools including FunASR and Whisper, which implemented advanced audio cleansing techniques such as voice activity detection and silence removal algorithms to ensure data quality.
 
 [1] [pai-megagtron-patch](https://github.com/alibaba/Pai-Megatron-Patch/tree/main)
 
