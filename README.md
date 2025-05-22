@@ -12,7 +12,7 @@
     <a href="https://huggingface.co/IDEA-Emdoor/UniTTS-mixed-v0.1" style="color:#FFD700">Hugging Face Model</a>
     <a href="https://github.com/IDEA-Emdoor-Lab/UniTTS?tab=readme-ov-file" style="color:gray">Code</a>
      <p>
-        <img src="figures/idea.png" alt="Institution 1" style="width: 200px; height: 60px;">
+        <img src="figures/idea_capture.png" alt="Institution 1" style="width: 200px; height: 60px;">
         <img src="figures/yidao_logo.png" alt="Institution 2" style="width: 200px; height: 60px;">
         <img src="figures/yijiayiban.png" alt="Institution 3" style="width: 200px; height: 60px;">
     </p>
@@ -23,7 +23,9 @@
 
 ### Overview
 
-we introduce [DistilCodec](https://github.com/IDEA-Emdoor-Lab/DistilCodec/tree/dev?tab=readme-ov-file) and UniTTS. DistilCodec is a single-codebook audio codec, which has 32768 codes, and the utilization of the codebook achieves nearly 100\%. UniTTS leverages DistilCodec for audio discretization, while its backbone network adopts Qwen2.5-7B to model relationships between audio tokens. \item \textbf{DistilCodec}: We propose a training methodology that enables the distillation of multi-codebook NAC into single-codebook NAC. Through this approach, we have developed DistilCodec - a single-codebook NAC containing 32,768 codes that achieves 100\% utilization with balanced code distribution. Notably, DistilCodec employs universal audio data for training rather than being restricted to speech-specific datasets.Our main contributions are summarized as follows:
+we introduce [DistilCodec](https://github.com/IDEA-Emdoor-Lab/DistilCodec/tree/dev?tab=readme-ov-file) and UniTTS. DistilCodec is a single-codebook audio codec, which has 32768 codes, and the utilization of the codebook achieves nearly 100\%. UniTTS leverages DistilCodec for audio discretization, while its backbone network adopts Qwen2.5-7B to model relationships between audio tokens. 
+
+Our main contributions are summarized as follows:
 
   - DistilCodec: We propose a training methodology that enables the distillation of multi-codebook NAC into single-codebook NAC. Through this approach, we have developed DistilCodec - a single-codebook NAC containing 32,768 codes that achieves 100\% utilization with balanced code distribution. Notably, DistilCodec employs universal audio data for training rather than being restricted to speech-specific datasets.
   - UniTTS: We present UniTTS, a novel TTS system trained on QWen2.5-7B and DistilCodec. Leveraging DistilCodec's comprehensive audio modeling capabilities, UniTTS achieves end-to-end speech synthesis with full-spectrum audio input/output. The system demonstrates enhanced naturalness in emotional expressiveness compared to conventional TTS systems, particularly in capturing subtle prosodic variations and affective nuances during audio generation. 
