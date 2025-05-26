@@ -247,6 +247,8 @@ ckpt_config=$3    # IDEA-Emdoor/UniTTS-mixed-v0.1
 
 use_vllm=true
 
+# Note: Set the downloaded DistilCodec path in webdemo_audio_english.
+
 CUDA_VISIBLE_DEVICES=6 python webdemo_audio_english.py \
     --host 0.0.0.0 \
     --port 8893 \
@@ -257,6 +259,7 @@ CUDA_VISIBLE_DEVICES=6 python webdemo_audio_english.py \
     --api_url /api/demo/541832 \
     --use_vllm $use_vllm
 ```
+
 | WebUI DEMO |
 |-------------|
 | ![UniTTS](figures/webUI.png "UniTTS") |
