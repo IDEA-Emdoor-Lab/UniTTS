@@ -23,6 +23,31 @@ tts_prompt_ref_text = """<|im_start|>system
 【文本】是用户当前的输入模式。<|im_end|><|endoftext|><|im_start|>user
 你要把【{content}】这句话转为语音。<|im_end|><|endoftext|><|im_start|>assistant
 """
+
+long_cot_prompt_template = """<|im_start|>system
+你是一个人工智能助手，你在回答用户问题时候需要根据输出模式回答。
+如果用户指定输出模式为深度思考，先生成思考步骤，再回答问题，生成的深度思考内容需要放在<|cot_begin|>和<|cot_end|>中，再生成最终答案。
+如果用户指定输出模式为直接回答答案，则直接回答用户问题，不需要生成思考过程。
+
+
+### 你的输出模式：
+【深度思考】
+
+<|im_end|><|endoftext|><|im_start|>user
+{question} <|im_end|><|endoftext|><|im_start|>assistant
+"""
+
+text_conversation_prompt_template = """<|im_start|>system
+你是一位有帮助的人工智能助手，擅长回答用户问题。
+
+### 你的输出模式：
+你的输出模式：【文本】
+
+### 用户输入模式：
+【文本】是用户当前的输入模式。
+<|im_end|><|endoftext|><|im_start|>user
+{question}<|im_end|><|endoftext|><|im_start|>assistant
+"""
 def get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("--input_path", type=str)
@@ -89,20 +114,33 @@ class InferenceClient:
         prompt = tts_prompt_ref_text.format(content=self.args.text, example_voice=ref_audio_text, example_text=prompt_text)
         return prompt
     
+    def format_long_cot_prompt(self):      
+        prompt_text = self.args.ref_text
+        prompt = long_cot_prompt_template.format(question=prompt_text)
+        return prompt
+    
+    def format_text_prompt(self):      
+        prompt_text = self.args.ref_text
+        prompt = long_cot_prompt_template.format(question=prompt_text)
+        return prompt
+    
     def load_model_and_codec(self):
         llm = LLM(model=self.args.model_name, dtype='auto', gpu_memory_utilization=0.8, seed=self.args.seed) # , seed=42    
-
-        codec = DistilCodec.from_pretrained(
-            config_path=self.args.model_config,
-            model_path=self.args.ckpt_config,
-            use_generator=True,
-            is_debug=False,
-            local_rank=0).eval()
+        
+        if self.args.inference_type == 'tts':
+            codec = DistilCodec.from_pretrained(
+                config_path=self.args.model_config,
+                model_path=self.args.ckpt_config,
+                use_generator=True,
+                is_debug=False,
+                local_rank=0).eval()
+        else:
+            codec = None
         
         return llm, codec
 
 
-    def inference_data(self):
+    def inference_tts(self):
         tokenizer: QWenTokenizer = QWenTokenizer(self.args.model_name)
         stop_tokens = ["<|endoftext|>"]
         stop_ids = tokenizer.tokenizer.convert_tokens_to_ids(stop_tokens)
@@ -136,12 +174,73 @@ class InferenceClient:
             save_path=self.args.output_dir,
             name_tag=utt
         )
+    def inference_long_cot(self):
+        tokenizer: QWenTokenizer = QWenTokenizer(self.args.model_name)
+        stop_tokens = ["<|endoftext|>"]
+        stop_ids = tokenizer.tokenizer.convert_tokens_to_ids(stop_tokens)
+        print(f'Stop IDs: {stop_ids}')
+        # 定义停止 token ID 列表
+        stop_tokens = ["<|endoftext|>", "<|endofaudio|>", "<|im_end|>"]
+        stop_ids = tokenizer.tokenizer.convert_tokens_to_ids(stop_tokens)
+
+
+        # 初始化model和codec
+        llm, codec = self.load_model_and_codec()
+        sampling_params = SamplingParams(temperature=self.args.temperature, top_p=self.args.top_p, stop_token_ids=stop_ids, max_tokens=6000)
+    
+
+        if not os.path.exists(self.args.output_dir):
+            os.mkdir(self.args.output_dir)
+        
+        prompt = self.format_long_cot_prompt()
+
+        output = llm.generate([prompt], sampling_params)
+        # tokens = tokenizer.tokenizer.encode(output[0].outputs[0].text)[1: -2]
+        utt = 'infer_long_cot'
+        save_file_path = os.path.join(self.args.output_dir, f'{utt}.txt')
+        with open(save_file_path, 'w') as f:
+            f.write(output[0].outputs[0].text)
+        
+    def inference_text_conversation(self):
+        tokenizer: QWenTokenizer = QWenTokenizer(self.args.model_name)
+        stop_tokens = ["<|endoftext|>"]
+        stop_ids = tokenizer.tokenizer.convert_tokens_to_ids(stop_tokens)
+        print(f'Stop IDs: {stop_ids}')
+        # 定义停止 token ID 列表
+        stop_tokens = ["<|endoftext|>", "<|endofaudio|>", "<|im_end|>"]
+        stop_ids = tokenizer.tokenizer.convert_tokens_to_ids(stop_tokens)
+
+        # 初始化model和codec
+        llm, codec = self.load_model_and_codec()
+        sampling_params = SamplingParams(temperature=self.args.temperature, top_p=self.args.top_p, stop_token_ids=stop_ids, max_tokens=6000)
+    
+
+        if not os.path.exists(self.args.output_dir):
+            os.mkdir(self.args.output_dir)
+        
+        prompt = self.format_text_prompt()
+
+        output = llm.generate([prompt], sampling_params)
+        # tokens = tokenizer.tokenizer.encode(output[0].outputs[0].text)[1: -2]
+        utt = 'infer_long_cot'
+        save_file_path = os.path.join(self.args.output_dir, f'{utt}.txt')
+        with open(save_file_path, 'w') as f:
+            f.write(output[0].outputs[0].text)
+
 def main():
     args = get_args()
     print(args)
     
     client = InferenceClient(args)
-    client.inference_data()
+    if args.inference_type == 'tts':
+        client.inference_tts()
+
+    elif args.inference_type == 'long_cot':
+        client.inference_long_cot()
+
+    elif args.inference_type == 'text_conversation':
+        client.inference_text_conversation()
+    #client.inference_tts()
 
 if __name__ == '__main__':
     # convert_token2audio()

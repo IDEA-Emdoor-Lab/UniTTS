@@ -35,6 +35,12 @@ Our main contributions are summarized as follows:
 
 The architecture of UniTTS is illustrated in the figure below. ![UniTTS](./figures/figure_1.jpg).
 
+# Roadmap
+- [done]  [DistilCodec](https://github.com/IDEA-Emdoor-Lab/DistilCodec/) has finished training and has been open-sourced.
+- [done]  Version 0.1 of UniTTS is available, supporting text conversations, long-CoT, and Chinese TTS.
+- [undo]  UniTTS-v0.2 supports multiple languages including Chinese and English, with enhanced emotional speech synthesis capabilities.
+- [undo] Scale UniTTS into an end-to-end S2S system within feasible computational limits.
+
 # Training data distribution and application scope
 The model architecture was augmented with cross-lingual text-speech paired datasets (English and Chinese) alongside text-associated instruction corpora during pretraining. Subsequent SFT and alignment phases systematically incorporated three datasets: text instructions dataset, long-CoT dataset, and Chinese TTS dataset. Consequently, the model demonstrates robust capabilities in text-based conversational, long-CoT conversational, and Chinese TTS.
 
@@ -71,9 +77,7 @@ The proposed model supports the following capabilities
 - Clone the repo
 ``` sh
 git clone git@github.com:IDEA-Emdoor-Lab/UniTTS.git
-
 git clone git@github.com:IDEA-Emdoor-Lab/DistilCodec.git
-
 cd UniTTS
 ```
 
@@ -97,39 +101,175 @@ git lfs install
 
 # clone UniTTS model
 git clone git@hf.co:IDEA-Emdoor/UniTTS-mixed-v0.1
-
-# clone DistilCodec model
-git clone git@hf.co:IDEA-Emdoor/DistilCodec-v1.0
 ```
 
-**Training Usage**
+## Training Usage
 
 We have open-sourced our three-stage training code, including pre-training, SFT, and LPO. Our training code is built upon the pai-megatron-patch with optimizations. For usage instructions on pre-training and SFT training, please refer to the following [README](pai-megatron-patch/examples/qwen2_5/README.md).
 
 
-**Inference Usage**
+## Inference Usage
+### TTS Inference Usage
+
+```
+#### Step 1:  Init model
+
+from cli.tokenizer import QWenTokenizer
+from tts_tool import enocde_audio, tts_prompt_ref_text
+import soundfile as sf
+import librosa
+from vllm import LLM, SamplingParams
+
+import sys
+sys.path.append(Discodec code path)
+from distil_codec import DistilCodec # type: ignore
+
+#init model
+model_name="IDEA-Emdoor/UniTTS-mixed-v0.1"
+model_config="IDEA-Emdoor/UniTTS-mixed-v0.1/codec_config.json"
+ckpt_config="IDEA-Emdoor/UniTTS-mixed-v0.1"
+
+ref_audio_path='cli/ref.mp3'
+ref_text='求求你，再给我一次机会，我保证不会让你失望……'
+infer_text='天啊！这竟然是真的？我简直不敢相信！'
+
+
+llm = LLM(model=model_name, dtype='auto', gpu_memory_utilization=0.8, seed=0)   
+codec = DistilCodec.from_pretrained(
+    config_path=model_config,
+    model_path=ckpt_config,
+    use_generator=True,
+    is_debug=False,
+    local_rank=0).eval()
+
+tokenizer: QWenTokenizer = QWenTokenizer(model_name)
+stop_tokens = ["<|endoftext|>", "<|endofaudio|>", "<|im_end|>"]
+stop_ids = tokenizer.tokenizer.convert_tokens_to_ids(stop_tokens)
+
+#### Step 2: format prompt
+
+ref_audio_text = enocde_audio(codec, tokenizer, ref_audio_path)
+ref_audio_text = f'<|inter_audio_begin|>{ref_audio_text}<|inter_audio_end|>'
+prompt = tts_prompt_ref_text.format(content=infer_text, example_voice=ref_audio_text, example_text=ref_text)
+
+#### Step 3: inference speech token
+sampling_params = SamplingParams(temperature=0.9, top_p=0.9, stop_token_ids=stop_ids, max_tokens=6000)
+output = llm.generate([prompt], sampling_params)
+
+#### step 4: decode speech token
+
+output_dir='./' # save path
+tokens = tokenizer.tokenizer.encode(output[0].outputs[0].text)[1: -2]
+utt = 'infer'
+y_gen = codec.decode_from_codes(
+    tokens, 
+    minus_token_offset=True # if the 'plus_llm_offset' of method demo_for_generate_audio_codes is set to True, then minus_token_offset must be True.
+)
+codec.save_wav(
+    audio_gen_batch=y_gen, 
+    nhop_lengths=[y_gen.shape[-1]], 
+    save_path=output_dir,
+    name_tag=utt
+)
+
+```
 
 Direct inference can be executed with the following script
 ``` sh
 cd cli
 sh run_evalation.sh
 ```
-Or you can also run it directly using the following Python command
+
+### Long-cot Inference Usage
 ```
-python inference.py \
-    --model_config $model_config \
-    --ckpt_config $ckpt_config \
-    --model_name $model_path \
-    --output_dir $output_dir \
-    --temperature $temperature \
-    --top_p $top_p \
-    --seed $seed \
-    --text $text \
-    --ref_text $ref_text \
-    --ref_audio_path $ref_audio_path \
+#### Step 1:  Init model
+
+from cli.tokenizer import QWenTokenizer
+from cli.tts_tool import enocde_audio, long_cot_prompt_template
+import soundfile as sf
+import librosa
+from vllm import LLM, SamplingParams
+
+
+#init model
+model_name="IDEA-Emdoor/UniTTS-mixed-v0.1"
+infer_text="给我写一首春天的作文"
+llm = LLM(model=model_name, dtype='auto', gpu_memory_utilization=0.8, seed=0)   
+
+tokenizer: QWenTokenizer = QWenTokenizer(model_name)
+stop_tokens = ["<|endoftext|>", "<|endofaudio|>", "<|im_end|>"]
+stop_ids = tokenizer.tokenizer.convert_tokens_to_ids(stop_tokens)
+
+#### Step 2: format prompt
+
+prompt = long_cot_prompt_template.format(question=infer_text)
+
+#### Step 3: inference speech token
+sampling_params = SamplingParams(temperature=0.8, top_p=0.8, stop_token_ids=stop_ids, max_tokens=6000)
+output = llm.generate([prompt], sampling_params)
+
+print(output[0].outputs[0].text)
+
 ```
 
+### Text conversation Inference Usage
+
+```
+#### Step 1:  Init model
+
+from cli.tokenizer import QWenTokenizer
+from cli.tts_tool import enocde_audio, text_conversation_prompt_template
+from vllm import LLM, SamplingParams
+
+
+#init model
+model_name="IDEA-Emdoor/UniTTS-mixed-v0.1"
+
+infer_text="天空为什么是蓝色的？"
+llm = LLM(model=model_name, dtype='auto', gpu_memory_utilization=0.8, seed=0)   
+
+tokenizer: QWenTokenizer = QWenTokenizer(model_name)
+stop_tokens = ["<|endoftext|>", "<|endofaudio|>", "<|im_end|>"]
+stop_ids = tokenizer.tokenizer.convert_tokens_to_ids(stop_tokens)
+
+#### Step 2: format prompt
+
+prompt = text_conversation_prompt_template.format(question=infer_text)
+
+#### Step 3: inference speech token
+sampling_params = SamplingParams(temperature=0.75, top_p=0.75, stop_token_ids=stop_ids, max_tokens=6000)
+output = llm.generate([prompt], sampling_params)
+
+print(output[0].outputs[0].text)
+
+```
+
+## Web UI
+You can launch a web page for more convenient testing.
+```
+model_path=$1     # IDEA-Emdoor/UniTTS-mixed-v0.1
+model_config=$2   # IDEA-Emdoor/UniTTS-mixed-v0.1/codec_config.json
+ckpt_config=$3    # IDEA-Emdoor/UniTTS-mixed-v0.1
+
+use_vllm=true
+
+CUDA_VISIBLE_DEVICES=6 python webdemo_audio_english.py \
+    --host 0.0.0.0 \
+    --port 8893 \
+    --model_config $model_config \
+    --ckpt_config $ckpt_config \
+    --model_path $model_path \
+    --demo_url /demo/541833 \
+    --api_url /api/demo/541832 \
+    --use_vllm $use_vllm
+```
+| WebUI DEMO |
+|-------------|
+| ![UniTTS](figures/webUI.png "UniTTS") |
+
 ## **Demos**
+
+### TTS  demos
 
 Our model can generate audio that maintains the timbre of the reference audio while producing emotionally expressive output tailored to the context of the target sample. Here are some demos generated by UniTTS. 
 
@@ -147,17 +287,15 @@ Our model can generate audio that maintains the timbre of the reference audio wh
 | <audio controls src="./demos/voice9/system_audio.wav"><a href="./demos/voice9/system_audio.wav">Download</a></audio> | 听到这个消息，我的心一下子沉到了谷底。<br/>Upon hearing this news, my heart sank to the deepest abyss. | <audio controls src="./demos/voice9/infer_9_1.wav"><a href="./demos/voice9/infer_9_1.wav">Download</a></audio> |
 | <audio controls src="./demos/voice10/system_audio.wav"><a href="./demos/voice10/system_audio.wav">Download</a></audio> | 当我看到那双眼睛时，仿佛整个宇宙都安静了下来。<br/>When I saw those eyes, it felt as if the entire universe fell silent. | <audio controls src="./demos/voice10/infer_10_1.wav"><a href="./demos/voice10/infer_10_1.wav">Download</a></audio> |
 
+### Text Demos
 
+| Text Type |Prompt | Answer |
+|-----      |-----  |------  |
+| Long-cot  | 给我写一篇春天的作文<br/>Please write an essay about spring for me.   |    [result](demos/text/long_cot.txt)  |
+| Text Conversation | 天空为什么是蓝色的<br/>Why is the sky blue? | [result](demos/text/text_conversation.txt)    |
 
-## Citation
-```
-@article{wang2025unitts,
-  title={UniTTS: An end-to-end TTS system without decoupling of acoustic and semantic information},
-  author={Rui Wang,Qianguo Sun,Tianrong Chen,Zhiyun Zeng,Junlong Wu,Jiaxing Zhang},
-  journal={arXiv preprint arXiv:2408.16532},
-  year={2025}
-}
-```
+Note: Given the extended length of the model-generated long-cot output, the inference results have been consolidated in a supplementary document accessible via the provided hyperlink.
+
 
 ## References
 The UniTTS model underwent a three-phase training paradigm consisting of pretraining, SFT, and DPO. Our training framework was developed through extensive customization of the open-source PAI-Megatron-Patch infrastructure. The training data underwent rigorous preprocessing utilizing open-source speech processing tools including FunASR and Whisper, which implemented advanced audio cleansing techniques such as voice activity detection and silence removal algorithms to ensure data quality.
@@ -167,6 +305,19 @@ The UniTTS model underwent a three-phase training paradigm consisting of pretrai
 [2][FunASR](https://github.com/modelscope/FunASR)
 
 [3][whisper](https://github.com/openai/whisper)
+
+## Citation
+```
+@misc{wang2025unittsendtoendttsdecoupling,
+      title={UniTTS: An end-to-end TTS system without decoupling of acoustic and semantic information}, 
+      author={Rui Wang and Qianguo Sun and Tianrong Chen and Zhiyun Zeng and Junlong Wu and Jiaxing Zhang},
+      year={2025},
+      eprint={2505.17426},
+      archivePrefix={arXiv},
+      primaryClass={cs.SD},
+      url={https://arxiv.org/abs/2505.17426}, 
+}
+```
 
 
 ## Disclaimer
@@ -180,3 +331,7 @@ Important Notes:
 - Unauthorized voice replication applications are strictly prohibited.
 
 - Developers bear no responsibility for any misuse of this model.
+
+
+## License
+<a href="https://arxiv.org/abs/2505.17426">UniTTS: An end-to-end TTS system without decoupling of acoustic and semantic information</a> © 2025 by <a href="https://creativecommons.org">Rui Wang, Qianguo Sun, Tianrong Chen, Zhiyun Zeng, Junlong Wu, Jiaxing Zhang</a> is licensed under <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/">CC BY-NC-ND 4.0</a><img src="https://mirrors.creativecommons.org/presskit/icons/cc.svg" style="max-width: 1em;max-height:1em;margin-left: .2em;"><img src="https://mirrors.creativecommons.org/presskit/icons/by.svg" style="max-width: 1em;max-height:1em;margin-left: .2em;"><img src="https://mirrors.creativecommons.org/presskit/icons/nc.svg" style="max-width: 1em;max-height:1em;margin-left: .2em;"><img src="https://mirrors.creativecommons.org/presskit/icons/nd.svg" style="max-width: 1em;max-height:1em;margin-left: .2em;">
