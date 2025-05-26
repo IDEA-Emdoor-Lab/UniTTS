@@ -174,12 +174,6 @@ codec.save_wav(
 
 ```
 
-Direct inference can be executed with the following script
-``` sh
-cd cli
-sh run_evalation.sh
-```
-
 ### Long-cot Inference Usage
 ```
 #### Step 1:  Init model
