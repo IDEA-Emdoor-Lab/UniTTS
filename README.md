@@ -171,7 +171,7 @@ The UniTTS model underwent a three-phase training paradigm consisting of pretrai
 
 ## Disclaimer
 
-Our model provides zero-shot voice cloning services only for academic research purposes. We encourage the community to uphold safety and ethical principles in AI research and applications.
+Our model provides zero-shot voice cloning only for academic research purposes. We encourage the community to uphold safety and ethical principles in AI research and applications.
 
 Important Notes:
 
