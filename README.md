@@ -13,6 +13,8 @@
     <a href="https://github.com/IDEA-Emdoor-Lab/UniTTS?tab=readme-ov-file" style="color:gray">Code</a>
      <p>
         <img src="figures/idea_capture.png" alt="Institution 1" style="width: 200px; height: 60px;">
+    </p>
+     <p>
         <img src="figures/yidao_logo.png" alt="Institution 2" style="width: 200px; height: 60px;">
         <img src="figures/yijiayiban.png" alt="Institution 3" style="width: 200px; height: 60px;">
     </p>
