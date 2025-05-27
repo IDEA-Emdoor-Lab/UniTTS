@@ -29,7 +29,7 @@ we introduce UniTTS and [DistilCodec](https://github.com/IDEA-Emdoor-Lab/DistilC
 
 Our main contributions are summarized as follows:
 
-  - DistilCodec: We propose a training methodology that enables the distillation of multi-codebook NAC into single-codebook NAC. Through this approach, we have developed DistilCodec - a single-codebook NAC containing 32,768 codes that achieves 100\% utilization with balanced code distribution. Notably, DistilCodec employs universal audio data for training rather than being restricted to speech-specific datasets.
+  - DistilCodec: We propose a training methodology that enables the distillation of multi-codebook NAC into single-codebook Neural Audio Codecs(NAC). Through this approach, we have developed DistilCodec - a single-codebook NAC containing 32,768 codes that achieves 100\% utilization with balanced code distribution. Notably, DistilCodec employs universal audio data for training rather than being restricted to speech-specific datasets.
   - UniTTS: We present UniTTS, a novel TTS system trained on QWen2.5-7B and DistilCodec. Leveraging DistilCodec's comprehensive audio modeling capabilities, UniTTS achieves end-to-end speech synthesis with full-spectrum audio input/output. The system demonstrates enhanced naturalness in emotional expressiveness compared to conventional TTS systems, particularly in capturing subtle prosodic variations and affective nuances during audio generation. 
   - Novel Audio Language Model Paradigm: We establish a dual-phase Audio Language Model (ALM) training framework, which comprises (i) Audio Perceptual Modeling (DistilCodec) focusing purely on acoustic discretization, and (ii) Audio Cognitive Modeling (UniTTS) implemented via pretraining (incorporating universal audio autoregressive tasks), supervised fine-tuning (evaluating text-audio interleaved prompts' impact), and alignment (employing direct preference optimization for speech refinement) - enabled by UniTTS's complete end-to-end integration within the LLM.
 
@@ -121,13 +121,13 @@ We have open-sourced our three-stage training code, including pre-training, SFT,
 #### Step 1:  Init model
 
 from cli.tokenizer import QWenTokenizer
-from tts_tool import enocde_audio, tts_prompt_ref_text
+from cli.tts_tool import enocde_audio, tts_prompt_ref_text
 import soundfile as sf
 import librosa
 from vllm import LLM, SamplingParams
 
 import sys
-sys.path.append(Discodec code path)
+sys.path.append(Distilcodec code path) # set DistilCodec code path
 from distil_codec import DistilCodec # type: ignore
 
 #init model
@@ -186,8 +186,6 @@ codec.save_wav(
 
 from cli.tokenizer import QWenTokenizer
 from cli.tts_tool import enocde_audio, long_cot_prompt_template
-import soundfile as sf
-import librosa
 from vllm import LLM, SamplingParams
 
 
