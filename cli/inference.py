@@ -8,7 +8,7 @@ import librosa
 import argparse
 from vllm import LLM, SamplingParams
 
-sys.path.append('../../DistilCodec/')
+sys.path.append('../../DistilCodec/') # set your own DistilCodec path
 from distil_codec import DistilCodec # type: ignore
 
 tts_prompt_ref_text = """<|im_start|>system
