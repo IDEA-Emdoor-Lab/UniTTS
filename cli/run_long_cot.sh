@@ -12,15 +12,11 @@ model_path=$1 # UniTTS model path             example: ./IDEA-Emdoor/UniTTS-mixe
 model_config=$2 # codec_model_config_path     example: ./DistilCodec-v1.0/model_config.json
 ckpt_config=$3 # codec_ckpt_path              example: ./DistilCodec-v1.0
 
-model_path=/cognitive_comp/common_checkpoint/S_model_management/lam/lam_20250410/lpo_20500_step # UniTTS model path             example: ./IDEA-Emdoor/UniTTS-mixed-v0.1/
-model_config=/cognitive_comp/common_checkpoint/S_model_management/codec/20241017/Qwen2.5-7B-Codec0927-S204000-AEdivided100/codec_config.json # codec_model_config_path     example: ./DistilCodec-v1.0/model_config.json
-ckpt_config=/cognitive_comp/common_checkpoint/S_model_management/codec/20241017/Qwen2.5-7B-Codec0927-S204000-AEdivided100 # codec_ckpt_path              example: ./DistilCodec-v1.0
-
 
 text='给我写一首赞美春天的作文'
 
-temperature=0.9
-top_p=0.9
+temperature=0.8
+top_p=0.8
 seed=0
 inference_type='long_cot'
 

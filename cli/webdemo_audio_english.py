@@ -24,7 +24,7 @@ from vllm import LLM, SamplingParams
 
 from prompt_template import general_system, dialog_role_system, dialog_user_system, general_user_input
 
-sys.path.append('/cognitive_comp/sunqianguo/workspace/audio_codec')
+sys.path.append(DistilCodec Path)
 from aipal_codec import AIPalCodec, decode_codec_and_save_audio # type: ignore
 
 # 自定义 StoppingCriteria，用于多个停止 ID
@@ -602,15 +602,10 @@ if __name__ == "__main__":
 
     app = gr.mount_gradio_app(app, demo, path=args.demo_url)
 
-    # ssl_certfile
-    # ssl_keyfile
+    # set ssl_certfile
+    # set ssl_keyfile
     
-    #uvicorn.run(app, host=args.host, port=args.port)
-    uvicorn.run(app, host=args.host, port=args.port,
-                ssl_certfile="/cognitive_comp/sunqianguo/workspace/GLM-4-Voice/ssl/cert.pem", ssl_keyfile="/cognitive_comp/sunqianguo/workspace/GLM-4-Voice/ssl/key.pem")
-
-
-
+    uvicorn.run(app, host=args.host, port=args.port)
     
   
     

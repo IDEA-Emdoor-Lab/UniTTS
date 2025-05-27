@@ -21,11 +21,11 @@
 </div>
 
 
-## UniTTS
 
-### Overview
 
-we introduce [DistilCodec](https://github.com/IDEA-Emdoor-Lab/DistilCodec/tree/dev?tab=readme-ov-file) and UniTTS. DistilCodec is a single-codebook audio codec, which has 32768 codes, and the utilization of the codebook achieves nearly 100\%. UniTTS leverages DistilCodec for audio discretization, while its backbone network adopts Qwen2.5-7B to model relationships between audio tokens. 
+## Overview
+
+we introduce UniTTS and [DistilCodec](https://github.com/IDEA-Emdoor-Lab/DistilCodec/tree/dev?tab=readme-ov-file) . DistilCodec is a single-codebook audio codec, which has 32768 codes, and the utilization of the codebook achieves nearly 100\%. UniTTS leverages DistilCodec for audio discretization, while its backbone network adopts Qwen2.5-7B to model relationships between audio tokens. 
 
 Our main contributions are summarized as follows:
 
@@ -35,13 +35,13 @@ Our main contributions are summarized as follows:
 
 The architecture of UniTTS is illustrated in the figure below. ![UniTTS](./figures/figure_1.jpg).
 
-# Roadmap
+## Roadmap
 - [done]  [DistilCodec](https://github.com/IDEA-Emdoor-Lab/DistilCodec/) has finished training and has been open-sourced.
 - [done]  Version 0.1 of UniTTS is available, supporting text conversations, long-CoT, and Chinese TTS.
 - [undo]  UniTTS-v0.2 supports multiple languages including Chinese and English, with enhanced emotional speech synthesis capabilities.
 - [undo] Scale UniTTS into an end-to-end S2S system within feasible computational limits.
 
-# Training data distribution and application scope
+## Training data distribution and application scope
 The model architecture was augmented with cross-lingual text-speech paired datasets (English and Chinese) alongside text-associated instruction corpora during pretraining. Subsequent SFT and alignment phases systematically incorporated three datasets: text instructions dataset, long-CoT dataset, and Chinese TTS dataset. Consequently, the model demonstrates robust capabilities in text-based conversational, long-CoT conversational, and Chinese TTS.
 
 The distribution of the sft training data is as follows:
@@ -70,6 +70,12 @@ The proposed model supports the following capabilities
 | Long-cot conversation      | Supported           |
 | Chinese TTS                | Supported           |
 
+## Available models
+Qwen2.5-7B-ExtVocab is an enhanced version of the Qwen2.5-7B model, extended with additional audio tokens for training purposes. UniTTS-mixed-v0.1, developed through a three-stage training process for inference.
+|Model Version| Huggingface |  Application |
+|-----------------------|---------|-----------------------------------|
+| Qwen2.5-7B-ExtVocab | [HuggingFace](https://huggingface.co/IDEA-Emdoor/Qwen2.5-7B-ExtVocab) | For Pretrain |
+| UniTTS-mixed-v0.1   | [HuggingFace](https://huggingface.co/IDEA-Emdoor/UniTTS-mixed-v0.1)   | Chinese TTS infernce/text dialogue/long-cot |
 
 ## Install
 **Clone and Install**
@@ -292,7 +298,6 @@ Our model can generate audio that maintains the timbre of the reference audio wh
 | Text Conversation | 天空为什么是蓝色的<br/>Why is the sky blue? | [result](demos/text/text_conversation.txt)    |
 
 Note: Given the extended length of the model-generated long-cot output, the inference results have been consolidated in a supplementary document accessible via the provided hyperlink.
-
 
 ## References
 The UniTTS model underwent a three-phase training paradigm consisting of pretraining, SFT, and DPO. Our training framework was developed through extensive customization of the open-source PAI-Megatron-Patch infrastructure. The training data underwent rigorous preprocessing utilizing open-source speech processing tools including FunASR and Whisper, which implemented advanced audio cleansing techniques such as voice activity detection and silence removal algorithms to ensure data quality.
