@@ -119,7 +119,7 @@ git clone git@hf.co:IDEA-Emdoor/UniTTS-mixed-v0.1
 
 ## Training Usage
 
-We have open-sourced our three-stage training code, including pre-training, SFT, and LPO. Our training code is built upon the pai-megatron-patch with optimizations. For usage instructions on pre-training and SFT training, please refer to the following [README](pai-megatron-patch/examples/qwen2_5/README.md).
+We will open-source our three-stage training code, including pre-training, SFT, and LPO. Our training code is built upon the pai-megatron-patch with optimizations. For usage instructions on pre-training and SFT training, please refer to the following [README](pai-megatron-patch/examples/qwen2_5/README.md).
 
 
 ## Inference Usage
