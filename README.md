@@ -135,7 +135,7 @@ import librosa
 from vllm import LLM, SamplingParams
 
 import sys
-sys.path.append(Distilcodec code path) # set DistilCodec code path
+sys.path.append('../DistilCodec/') # set DistilCodec code path
 from distil_codec import DistilCodec # type: ignore
 
 #init model
