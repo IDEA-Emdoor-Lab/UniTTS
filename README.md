@@ -37,12 +37,20 @@ The architecture of UniTTS is illustrated in the figure below. ![UniTTS](./figur
 
 ## Roadmap
 - [done]  [DistilCodec](https://github.com/IDEA-Emdoor-Lab/DistilCodec/) has finished training and has been open-sourced.
-- [done]  Version 0.1 of UniTTS is available, supporting text conversations, long-CoT, and Chinese TTS.
+- [done]  UniTTS-v0.1 is available, supporting text conversations, long-CoT, and Chinese TTS.
 - [undo]  UniTTS-v0.2 supports multiple languages including Chinese and English, with enhanced emotional speech synthesis capabilities.
 - [undo] Scale UniTTS into an end-to-end S2S system within feasible computational limits.
 
 ## Training data distribution and application scope
 The model architecture was augmented with cross-lingual text-speech paired datasets (English and Chinese) alongside text-associated instruction corpora during pretraining. Subsequent SFT and alignment phases systematically incorporated three datasets: text instructions dataset, long-CoT dataset, and Chinese TTS dataset. Consequently, the model demonstrates robust capabilities in text-based conversational, long-CoT conversational, and Chinese TTS.
+
+The distribution of the pretraining training data is as follows:
+| Data Type                  | Data Size (B) |
+|----------------------------|---------------|
+| Text Data                  | 140           |
+| Text-Audio Alignment Data  | 82            |
+| Audio Data                 | 100           |
+| **Total**                  | **322**       |
 
 The distribution of the sft training data is as follows:
 
