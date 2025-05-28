@@ -25,7 +25,7 @@
 
 ## Overview
 
-we introduce UniTTS and [DistilCodec](https://github.com/IDEA-Emdoor-Lab/DistilCodec/tree/dev?tab=readme-ov-file) . DistilCodec is a single-codebook audio codec, which has 32768 codes, and the utilization of the codebook achieves nearly 100\%. UniTTS leverages DistilCodec for audio discretization, while its backbone network adopts Qwen2.5-7B to model relationships between audio tokens. 
+we introduce UniTTS and [DistilCodec](https://github.com/IDEA-Emdoor-Lab/DistilCodec) . DistilCodec is a single-codebook audio codec, which has 32768 codes, and the utilization of the codebook achieves nearly 100\%. UniTTS leverages DistilCodec for audio discretization, while its backbone network adopts Qwen2.5-7B to model relationships between audio tokens. 
 
 Our main contributions are summarized as follows:
 
