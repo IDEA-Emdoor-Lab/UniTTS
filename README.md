@@ -284,11 +284,6 @@ Our model can generate audio that maintains the timbre of the reference audio wh
 
 | Ref Audio | Inference Text (中/英) | Inference Audio |
 |-----------|-----------------------|-----------------|
-|<audio controls>
-  <source src="./demos/voice0/system_audio.webm" type="audio/webm">
-  Download</audio> |求求你…不要离开我，我真的好害怕…<br/>Please... don't leave me, I'm so scared... |<audio controls>
-  <source src="./demos/voice0/infer_0.webm" type="audio/webm">
-  Download</audio> |
 | <audio controls src="./demos/voice0/system_audio.wav"><a href="./demos/voice0/system_audio.wav">Download</a></audio> | 求求你…不要离开我，我真的好害怕…<br/>Please... don't leave me, I'm so scared... | <audio controls src="./demos/voice0/infer_0.wav"><a href="./demos/voice0/infer_0.wav">Download</a></audio> |
 | <audio controls src="./demos/voice1/system_audio.wav"><a href="./demos/voice1/system_audio.wav">Download</a></audio> | 天啊！这竟然是真的？我简直不敢相信！<br/>Oh my god! This is actually true? I can't believe it! | <audio controls src="./demos/voice1/infer_1_1.wav"><a href="./demos/voice1/infer_1_1.wav">Download</a></audio> |
 | <audio controls src="./demos/voice2/system_audio.wav"><a href="./demos/voice2/system_audio.wav">Download</a></audio> | 立刻停止你的行为！这是最后的警告！<br/>Cease your actions immediately! This is the final warning! | <audio controls src="./demos/voice2/infer_2_1.wav"><a href="./demos/voice2/infer_2_1.wav">Download</a></audio> |
